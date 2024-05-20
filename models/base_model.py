@@ -1,19 +1,20 @@
 """ Thiss module define a base calss for all other future classes"""
-#!/usr/bin/python3
+# !/usr/bin/python3
 import uuid
 from datetime import datetime
-#from models.__init__ import storage
+# from models.__init__ import storage
+
 
 class BaseModel():
     def __init__(self, *args, **kwargs):
         if len(kwargs) != 0:
 
-            # Delete the '__class__' key from kwargs if present 
+            # Delete the '__class__' key from kwargs if present
             # it can't be in the loop cause size of dict chANGES
             # WHILE LOOPING and gives a runtime error
             if "__class__" in kwargs:
                 del kwargs["__class__"]
-            
+
             # updating the str time found in dictionary into time obj
             for key, value in kwargs.items():
                 if key == "created_at" or key == "updated_at":
@@ -49,27 +50,31 @@ class BaseModel():
     '''
     def __str__(self):
         return f"[{type(self).__name__}] ({self.id}) {self.__dict__}"
+
     def save(self):
         """ updates the time of update_at with the curent time """
         from models import storage
+
         self.updated_at = datetime.now()
         storage.save()
+
     def to_dict(self):
         """
         converts instances to a dictionary
         we could have simply return self.__dict__ if we were
         not expected creat  a key and also modify exising keys
         """
-        #creating an empty dictionary object
+        # creating an empty dictionary object
         dict_obj = {}
-        #iterating though all the instances
+        # iterating though all the instances
         for key, value in self.__dict__.items():
-            #checking if they are times/datetime (created and updated AT) and put them in isofromat
+            # checking if they are times/datetime (created and updated AT) and
+            # put them in isofromat
             if isinstance(value, datetime):
                 dict_obj[key] = value.isoformat()
-            else:           
-                dict_obj[key] = value 
-        # adding a new key "__class_" with the class name of the objectfor better identifcation (for fututre)
+            else:
+                dict_obj[key] = value
+        # adding a new key "__class_" with the class name of
+        # the objectfor better identifcation (for fututre)
         dict_obj["__class__"] = type(self).__name__
         return dict_obj
-
