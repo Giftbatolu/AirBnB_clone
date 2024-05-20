@@ -5,14 +5,15 @@ import json
 from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
 
+
 class TestFileStorage(unittest.TestCase):
-    
+
     def setUp(self):
         """Set up for the tests"""
         self.storage = FileStorage("test_file.json")
         self.model = BaseModel()
         self.storage.new(self.model)
-    
+
     def tearDown(self):
         """Clean up after the tests"""
         if os.path.exists("test_file.json"):
@@ -68,7 +69,7 @@ class TestFileStorage(unittest.TestCase):
         key = f"BaseModel.{self.model.id}"
         self.assertIn(key, new_storage.all())
         self.assertEqual(new_storage.all()[key].id, self.model.id)
-    
+
     def test_save_invalid_path(self):
         """Test saving to an invalid file path"""
         invalid_storage = FileStorage("/invalid_path/test_file.json")
@@ -82,6 +83,6 @@ class TestFileStorage(unittest.TestCase):
         with self.assertRaises(json.JSONDecodeError):
             self.storage.reload()
 
+
 if __name__ == "__main__":
     unittest.main()
-
