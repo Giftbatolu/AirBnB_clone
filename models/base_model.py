@@ -53,10 +53,8 @@ class BaseModel:
         """
         obj_dict = {}
         for key, value in self.__dict__.items():
-
             if key == "created_at" or key == "updated_at":
                 obj_dict[key] = value.strftime("%Y-%m-%dT%H:%M:%S.%f")
-
             else:
                 obj_dict[key] = value
         obj_dict["__class__"] = self.__class__.__name__
