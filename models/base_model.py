@@ -1,63 +1,62 @@
-""" Thiss module define a base calss for all other future classes"""
-# !/usr/bin/python3
+#!/usr/bin/python3
+
 import uuid
 from datetime import datetime
-# from models.__init__ import storage
+
+""" Defines a base class that other class inherit from. """
 
 
-class BaseModel():
+class BaseModel:
+    """ The base class """
+
     def __init__(self, *args, **kwargs):
-        if len(kwargs) != 0:
+        """ The class constructors that initialise instance """
 
-            # Delete the '__class__' key from kwargs if present
-            # it can't be in the loop cause size of dict chANGES
-            # WHILE LOOPING and gives a runtime error
-            if "__class__" in kwargs:
-                del kwargs["__class__"]
+        if kwargs:
 
-            # updating the str time found in dictionary into time obj
+            dfmt = "%Y-%m-%dT%H:%M:%S.%f"
+
             for key, value in kwargs.items():
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                if key == 'created_at' or key == 'updated_at':
+                    value = datetime.strptime(kwargs[key], dfmt)
 
-            # Set the attribute value(tho we have made them objects
-            # they arent instances yet & zis sets other attributes too like id.
-                if key != "__class__":
+                if key != '__class__':
                     setattr(self, key, value)
         else:
+
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            from models import storage
             storage.new(self)
 
     def __str__(self):
-        return f"[{type(self).__name__}] ({self.id}) {self.__dict__}"
+        """
+            The print function of the class.
+
+        """
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
-        """ updates the time of update_at with the curent time """
-        from models import storage
+        """
+            Update "updated_at" with the current datetime.
 
+        """
         self.updated_at = datetime.now()
         storage.save()
 
     def to_dict(self):
         """
-        converts instances to a dictionary
-        we could have simply return self.__dict__ if we were
-        not expected creat  a key and also modify exising keys
+            Returns a dictionary containing all keys/value of
+            __dict__ of the instance.
         """
-        # creating an empty dictionary object
-        dict_obj = {}
-        # iterating though all the instances
+        obj_dict = {}
         for key, value in self.__dict__.items():
-            # checking if they are times/datetime (created and updated AT) and
-            # put them in isofromat
-            if isinstance(value, datetime):
-                dict_obj[key] = value.isoformat()
+
+            if key == "created_at" or key == "updated_at":
+                obj_dict[key] = value.strftime("%Y-%m-%dT%H:%M:%S.%f")
+
             else:
-                dict_obj[key] = value
-        # adding a new key "__class_" with the class name of
-        # the objectfor better identifcation (for fututre)
-        dict_obj["__class__"] = type(self).__name__
-        return dict_obj
+                obj_dict[key] = value
+        obj_dict["__class__"] = self.__class__.__name__
+
+        return obj_dict

@@ -1,12 +1,14 @@
+#!/usr/bin/python3
+
 """
-This module tests the Base Model through unit testing.
+    tests the BaseModel through unit testing.
+
 """
 
-# !/usr/bin/python3
-
-from models.base_model import BaseModel
-from datetime import datetime
 import unittest
+from datetime import datetime
+from models. base_model BaseModel
+from models.engine import file_storage
 
 
 class TestBaseModel(unittest.TestCase):
